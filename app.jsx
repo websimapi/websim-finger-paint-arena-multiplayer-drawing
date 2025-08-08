@@ -185,7 +185,7 @@ function FingerPaintApp() {
       }
     };
     window.websim.addEventListener("comment:created", handleComment);
-    return () => window.websim.removeEventListener("comment:created", handleComment);
+    return () => window.removeEventListener("comment:created", handleComment);
   }, [projectId, currentUser?.id]);
   useEffect(() => {
     const canvas = canvasRef.current;
