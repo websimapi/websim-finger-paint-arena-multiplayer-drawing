@@ -14,8 +14,8 @@ function FingerPaintApp() {
   const { data: paintings, loading } = useQuery(room.collection("paintings"));
   const { data: leaderboard, loading: leaderboardLoading } = useQuery(room.query(`
         SELECT p.user_id, u.username, 
-               COUNT(*) FILTER (WHERE p.path IS NOT NULL AND array_length(p.path, 1) > 0) as total_paintings,
-               COUNT(*) FILTER (WHERE p.path = '[]'::jsonb) as total_clears,
+               COUNT(*) FILTER (WHERE p.path IS NOT NULL AND jsonb_array_length(p.path) > 0) as total_paintings,
+               COUNT(*) FILTER (WHERE p.path IS NOT NULL AND jsonb_array_length(p.path) = 0) as total_clears,
                SUM(p.likes) as total_likes
         FROM public.paintings p
         JOIN public.user u ON p.user_id = u.id
