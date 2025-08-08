@@ -32,7 +32,7 @@
         }
       }
     },
-    "instructions": "This is a multiplayer finger painting app. Users can draw on their phones with their fingers, and all drawings are synced in real-time. The leaderboard shows users ranked by total likes received on their paintings."
+    "instructions": "This is a multiplayer finger painting app. Users can draw on their phones with their fingers, and all drawings are synced in real-time. The leaderboard shows users ranked by total likes received on their paintings. Users can tip to protect their drawings from being cleared."
   }
 }
 

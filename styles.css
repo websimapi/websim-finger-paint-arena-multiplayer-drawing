@@ -32,6 +32,11 @@ body {
     font-weight: bold;
 }
 
+.header > div {
+    display: flex;
+    align-items: center;
+}
+
 .leaderboard-btn {
     background: rgba(255, 255, 255, 0.2);
     border: none;
@@ -40,6 +45,7 @@ body {
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
+    margin-left: 1rem;
 }
 
 .leaderboard-btn:hover {
@@ -121,6 +127,21 @@ body {
 
 .clear-btn:hover {
     background: rgba(255, 100, 100, 1);
+}
+
+.tip-btn {
+    background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.tip-btn:hover {
+    transform: scale(1.05);
 }
 
 .leaderboard-panel {
