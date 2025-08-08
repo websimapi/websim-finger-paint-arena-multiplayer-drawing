@@ -14,8 +14,8 @@ function FingerPaintApp() {
   const { data: paintings, loading } = useQuery(room.collection("paintings"));
   const { data: leaderboard, loading: leaderboardLoading } = useQuery(room.query(`
         SELECT p.user_id, u.username, 
-               COUNT(*) FILTER (WHERE p.path IS NOT NULL AND NOT (jsonb_array_length(p.path) = 1 AND (p.path->0->>'x')::float = 0 AND (p.path->0->>'y')::float = 0)) as total_paintings,
-               COUNT(*) FILTER (WHERE p.path IS NOT NULL AND jsonb_array_length(p.path) = 1 AND (p.path->0->>'x')::float = 0 AND (p.path->0->>'y')::float = 0) as total_clears,
+               COUNT(*) FILTER (WHERE p.path IS NOT NULL AND NOT (jsonb_array_length(CASE WHEN jsonb_typeof(p.path) = 'array' THEN p.path ELSE '[]'::jsonb END) = 1 AND (p.path->0->>'x')::float = 0 AND (p.path->0->>'y')::float = 0)) as total_paintings,
+               COUNT(*) FILTER (WHERE p.path IS NOT NULL AND jsonb_array_length(CASE WHEN jsonb_typeof(p.path) = 'array' THEN p.path ELSE '[]'::jsonb END) = 1 AND (p.path->0->>'x')::float = 0 AND (p.path->0->>'y')::float = 0) as total_clears,
                SUM(p.likes) as total_likes
         FROM public.paintings p
         JOIN public.user u ON p.user_id = u.id
@@ -42,10 +42,10 @@ function FingerPaintApp() {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (paintings) {
-      paintings.forEach((painting) => {
-        if (painting.path && painting.path.length === 1 && painting.path[0].x === 0 && painting.path[0].y === 0) {
-          return;
-        }
+      const actualPaintings = paintings.filter(
+        (painting) => painting.path && !(painting.path.length === 1 && painting.path[0].x === 0 && painting.path[0].y === 0)
+      );
+      actualPaintings.forEach((painting) => {
         drawPath(ctx, painting.path, painting.color, painting.brushSize);
       });
     }
@@ -117,15 +117,14 @@ function FingerPaintApp() {
       path: [{ x: 0, y: 0 }],
       color: "#FFFFFF",
       brushSize: 0,
-      likes: 0,
-      type: "clear"
+      likes: 0
     });
   };
   return /* @__PURE__ */ jsxDEV("div", { className: "app", children: [
     /* @__PURE__ */ jsxDEV("header", { className: "header", children: [
       /* @__PURE__ */ jsxDEV("h1", { children: "Finger Paint Arena" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 164,
+        lineNumber: 166,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -139,14 +138,14 @@ function FingerPaintApp() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 165,
+          lineNumber: 167,
           columnNumber: 17
         },
         this
       )
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 163,
+      lineNumber: 165,
       columnNumber: 13
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: `canvas-container ${showLeaderboard ? "shrink" : ""}`, children: [
@@ -166,7 +165,7 @@ function FingerPaintApp() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 174,
+          lineNumber: 176,
           columnNumber: 17
         },
         this
@@ -183,13 +182,13 @@ function FingerPaintApp() {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 188,
+            lineNumber: 190,
             columnNumber: 29
           },
           this
         )) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 186,
+          lineNumber: 188,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "brush-controls", children: [
@@ -199,7 +198,7 @@ function FingerPaintApp() {
             "px"
           ] }, void 0, true, {
             fileName: "<stdin>",
-            lineNumber: 198,
+            lineNumber: 200,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ jsxDEV(
@@ -215,35 +214,35 @@ function FingerPaintApp() {
             false,
             {
               fileName: "<stdin>",
-              lineNumber: 199,
+              lineNumber: 201,
               columnNumber: 25
             },
             this
           )
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 197,
+          lineNumber: 199,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("button", { onClick: clearCanvas, className: "clear-btn", children: "\u{1F5D1}\uFE0F Clear" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 208,
+          lineNumber: 210,
           columnNumber: 21
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 185,
+        lineNumber: 187,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 173,
+      lineNumber: 175,
       columnNumber: 13
     }, this),
     showLeaderboard && /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-panel", children: [
       /* @__PURE__ */ jsxDEV("h2", { children: "\u{1F3C6} Global Leaderboard" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 216,
+        lineNumber: 218,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "sync-status", children: [
@@ -251,12 +250,12 @@ function FingerPaintApp() {
         new Date(lastSync).toLocaleTimeString()
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 217,
+        lineNumber: 219,
         columnNumber: 21
       }, this),
       leaderboardLoading ? /* @__PURE__ */ jsxDEV("div", { className: "loading", children: "Loading..." }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 221,
+        lineNumber: 223,
         columnNumber: 25
       }, this) : /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-list", children: leaderboard?.map((user, index) => /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-item", children: [
         /* @__PURE__ */ jsxDEV("span", { className: "rank", children: [
@@ -264,12 +263,12 @@ function FingerPaintApp() {
           index + 1
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 226,
+          lineNumber: 228,
           columnNumber: 37
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "username", children: user.username }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 227,
+          lineNumber: 229,
           columnNumber: 37
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "stats", children: [
@@ -281,32 +280,32 @@ function FingerPaintApp() {
           " likes"
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 228,
+          lineNumber: 230,
           columnNumber: 37
         }, this)
       ] }, user.user_id, true, {
         fileName: "<stdin>",
-        lineNumber: 225,
+        lineNumber: 227,
         columnNumber: 33
       }, this)) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 223,
+        lineNumber: 225,
         columnNumber: 25
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 215,
+      lineNumber: 217,
       columnNumber: 17
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 162,
+    lineNumber: 164,
     columnNumber: 9
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(FingerPaintApp, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 242,
+  lineNumber: 244,
   columnNumber: 13
 }));
