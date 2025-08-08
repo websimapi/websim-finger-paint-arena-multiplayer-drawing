@@ -4,6 +4,107 @@ import { createRoot } from "react-dom/client";
 import { WebsimSocket, useQuery } from "@websim/use-query";
 import confetti from "canvas-confetti";
 const room = new WebsimSocket();
+function TipModal({ show, onConfirm, onCancel, tipAmount, setTipAmount, isSubmitting }) {
+  if (!show) return null;
+  const protectionHours = Math.floor(tipAmount / 10 * 24);
+  let protectionMessage;
+  if (protectionHours >= 24) {
+    const days = Math.floor(protectionHours / 24);
+    protectionMessage = `${days} day${days > 1 ? "s" : ""}`;
+  } else {
+    protectionMessage = `${protectionHours} hour${protectionHours > 1 ? "s" : ""}`;
+  }
+  return /* @__PURE__ */ jsxDEV("div", { className: "tip-modal-overlay", children: /* @__PURE__ */ jsxDEV("div", { className: "tip-modal-content", children: [
+    /* @__PURE__ */ jsxDEV("h3", { children: "\u{1F48E} Protect Your Masterpiece!" }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 24,
+      columnNumber: 17
+    }, this),
+    /* @__PURE__ */ jsxDEV("p", { children: "Tip credits to protect your drawings from being cleared. For every 10 credits, you get 24 hours of protection." }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 25,
+      columnNumber: 17
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "tip-amount-display", children: [
+      "Tip: ",
+      /* @__PURE__ */ jsxDEV("strong", { children: [
+        tipAmount,
+        " credits"
+      ] }, void 0, true, {
+        fileName: "<stdin>",
+        lineNumber: 29,
+        columnNumber: 26
+      }, this)
+    ] }, void 0, true, {
+      fileName: "<stdin>",
+      lineNumber: 28,
+      columnNumber: 17
+    }, this),
+    /* @__PURE__ */ jsxDEV(
+      "input",
+      {
+        type: "range",
+        min: "10",
+        max: "1000",
+        step: "10",
+        value: tipAmount,
+        onChange: (e) => setTipAmount(parseInt(e.target.value, 10)),
+        className: "tip-slider",
+        disabled: isSubmitting
+      },
+      void 0,
+      false,
+      {
+        fileName: "<stdin>",
+        lineNumber: 31,
+        columnNumber: 17
+      },
+      this
+    ),
+    /* @__PURE__ */ jsxDEV("p", { children: [
+      "This will grant ",
+      /* @__PURE__ */ jsxDEV("span", { className: "protection-duration", children: protectionMessage }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 42,
+        columnNumber: 37
+      }, this),
+      " of protection."
+    ] }, void 0, true, {
+      fileName: "<stdin>",
+      lineNumber: 41,
+      columnNumber: 17
+    }, this),
+    /* @__PURE__ */ jsxDEV("p", { className: "screenshot-notice", children: "A snapshot of the canvas will be included in your comment." }, void 0, false, {
+      fileName: "<stdin>",
+      lineNumber: 44,
+      columnNumber: 17
+    }, this),
+    /* @__PURE__ */ jsxDEV("div", { className: "tip-modal-buttons", children: [
+      /* @__PURE__ */ jsxDEV("button", { onClick: onCancel, className: "tip-cancel-btn", disabled: isSubmitting, children: "Cancel" }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 47,
+        columnNumber: 21
+      }, this),
+      /* @__PURE__ */ jsxDEV("button", { onClick: onConfirm, className: "tip-confirm-btn", disabled: isSubmitting, children: isSubmitting ? "Submitting..." : "Confirm & Tip" }, void 0, false, {
+        fileName: "<stdin>",
+        lineNumber: 48,
+        columnNumber: 21
+      }, this)
+    ] }, void 0, true, {
+      fileName: "<stdin>",
+      lineNumber: 46,
+      columnNumber: 17
+    }, this)
+  ] }, void 0, true, {
+    fileName: "<stdin>",
+    lineNumber: 23,
+    columnNumber: 13
+  }, this) }, void 0, false, {
+    fileName: "<stdin>",
+    lineNumber: 22,
+    columnNumber: 9
+  }, this);
+}
 function FingerPaintApp() {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -15,6 +116,9 @@ function FingerPaintApp() {
   const [protectedUsers, setProtectedUsers] = useState({});
   const [projectId, setProjectId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isTipping, setIsTipping] = useState(false);
+  const [tipAmount, setTipAmount] = useState(10);
+  const [isSubmittingTip, setIsSubmittingTip] = useState(false);
   const { data: paintings, loading } = useQuery(room.collection("paintings"));
   const { data: leaderboard, loading: leaderboardLoading } = useQuery(room.query(`
         SELECT p.user_id, u.username, 
@@ -68,9 +172,10 @@ function FingerPaintApp() {
     };
     init();
     const handleComment = (e) => {
-      if (e.detail?.comment?.card_data?.type === "tip_comment") {
+      const commentData = e.detail || e;
+      if (commentData?.comment?.card_data?.type === "tip_comment") {
         if (projectId) fetchProtectedUsers(projectId);
-        if (e.detail.comment.author.id === currentUser?.id) {
+        if (commentData.comment.author.id === currentUser?.id) {
           confetti({
             particleCount: 150,
             spread: 180,
@@ -79,8 +184,8 @@ function FingerPaintApp() {
         }
       }
     };
-    window.addEventListener("comment:created", handleComment);
-    return () => window.removeEventListener("comment:created", handleComment);
+    window.websim.addEventListener("comment:created", handleComment);
+    return () => window.websim.removeEventListener("comment:created", handleComment);
   }, [projectId, currentUser?.id]);
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -185,22 +290,56 @@ function FingerPaintApp() {
     });
   };
   const handleTip = () => {
-    window.websim.postComment({
-      content: "I'm protecting my art! \u{1F3A8}\u2728",
-      credits: 10
-    });
+    setIsTipping(true);
+  };
+  const handleCancelTip = () => {
+    setIsTipping(false);
+    setIsSubmittingTip(false);
+  };
+  const handleConfirmTip = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    setIsSubmittingTip(true);
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        console.error("Failed to create blob from canvas.");
+        setIsSubmittingTip(false);
+        return;
+      }
+      try {
+        const imageUrl = await window.websim.upload(blob);
+        const protectionHours = Math.floor(tipAmount / 10 * 24);
+        let protectionMessage;
+        if (protectionHours >= 24) {
+          const days = Math.floor(protectionHours / 24);
+          protectionMessage = `${days} day${days > 1 ? "s" : ""}`;
+        } else {
+          protectionMessage = `${protectionHours} hour${protectionHours > 1 ? "s" : ""}`;
+        }
+        await window.websim.postComment({
+          content: `I'm protecting my art for ${protectionMessage}! \u{1F3A8}\u2728`,
+          images: [imageUrl],
+          credits: tipAmount
+        });
+        setIsTipping(false);
+      } catch (error) {
+        console.error("Error submitting tip:", error);
+      } finally {
+        setIsSubmittingTip(false);
+      }
+    }, "image/png");
   };
   return /* @__PURE__ */ jsxDEV("div", { className: "app", children: [
     /* @__PURE__ */ jsxDEV("header", { className: "header", children: [
       /* @__PURE__ */ jsxDEV("h1", { children: "Finger Paint Arena" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 256,
+        lineNumber: 356,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("div", { children: [
         /* @__PURE__ */ jsxDEV("button", { onClick: handleTip, className: "tip-btn", children: "\u{1F48E} Tip to Protect Art" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 258,
+          lineNumber: 358,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV(
@@ -214,19 +353,19 @@ function FingerPaintApp() {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 261,
+            lineNumber: 361,
             columnNumber: 21
           },
           this
         )
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 257,
+        lineNumber: 357,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 255,
+      lineNumber: 355,
       columnNumber: 13
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: `canvas-container ${showLeaderboard ? "shrink" : ""}`, children: [
@@ -246,7 +385,7 @@ function FingerPaintApp() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 271,
+          lineNumber: 371,
           columnNumber: 17
         },
         this
@@ -263,13 +402,13 @@ function FingerPaintApp() {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 285,
+            lineNumber: 385,
             columnNumber: 29
           },
           this
         )) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 283,
+          lineNumber: 383,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "brush-controls", children: [
@@ -279,7 +418,7 @@ function FingerPaintApp() {
             "px"
           ] }, void 0, true, {
             fileName: "<stdin>",
-            lineNumber: 295,
+            lineNumber: 395,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ jsxDEV(
@@ -295,35 +434,35 @@ function FingerPaintApp() {
             false,
             {
               fileName: "<stdin>",
-              lineNumber: 296,
+              lineNumber: 396,
               columnNumber: 25
             },
             this
           )
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 294,
+          lineNumber: 394,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("button", { onClick: clearCanvas, className: "clear-btn", children: "\u{1F5D1}\uFE0F Clear" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 305,
+          lineNumber: 405,
           columnNumber: 21
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 282,
+        lineNumber: 382,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 270,
+      lineNumber: 370,
       columnNumber: 13
     }, this),
     showLeaderboard && /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-panel", children: [
       /* @__PURE__ */ jsxDEV("h2", { children: "\u{1F3C6} Global Leaderboard" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 313,
+        lineNumber: 413,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "sync-status", children: [
@@ -331,12 +470,12 @@ function FingerPaintApp() {
         new Date(lastSync).toLocaleTimeString()
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 314,
+        lineNumber: 414,
         columnNumber: 21
       }, this),
       leaderboardLoading ? /* @__PURE__ */ jsxDEV("div", { className: "loading", children: "Loading..." }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 318,
+        lineNumber: 418,
         columnNumber: 25
       }, this) : /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-list", children: leaderboard?.map((user, index) => /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-item", children: [
         /* @__PURE__ */ jsxDEV("span", { className: "rank", children: [
@@ -344,12 +483,12 @@ function FingerPaintApp() {
           index + 1
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 323,
+          lineNumber: 423,
           columnNumber: 37
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "username", children: user.username }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 324,
+          lineNumber: 424,
           columnNumber: 37
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "stats", children: [
@@ -361,32 +500,51 @@ function FingerPaintApp() {
           " likes"
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 325,
+          lineNumber: 425,
           columnNumber: 37
         }, this)
       ] }, user.user_id, true, {
         fileName: "<stdin>",
-        lineNumber: 322,
+        lineNumber: 422,
         columnNumber: 33
       }, this)) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 320,
+        lineNumber: 420,
         columnNumber: 25
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 312,
+      lineNumber: 412,
       columnNumber: 17
-    }, this)
+    }, this),
+    /* @__PURE__ */ jsxDEV(
+      TipModal,
+      {
+        show: isTipping,
+        onConfirm: handleConfirmTip,
+        onCancel: handleCancelTip,
+        tipAmount,
+        setTipAmount,
+        isSubmitting: isSubmittingTip
+      },
+      void 0,
+      false,
+      {
+        fileName: "<stdin>",
+        lineNumber: 435,
+        columnNumber: 13
+      },
+      this
+    )
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 254,
+    lineNumber: 354,
     columnNumber: 9
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(FingerPaintApp, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 339,
+  lineNumber: 448,
   columnNumber: 13
 }));

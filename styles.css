@@ -194,6 +194,108 @@ body {
     opacity: 0.7;
 }
 
+.tip-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.tip-modal-content {
+    background: linear-gradient(135deg, #3c3c3c, #2b2b2b);
+    padding: 2rem;
+    border-radius: 15px;
+    color: white;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tip-modal-content h3 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.tip-modal-content p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.screenshot-notice {
+    font-size: 0.8rem !important;
+    opacity: 0.7 !important;
+    font-style: italic;
+}
+
+.protection-duration {
+    font-weight: bold;
+    color: #8aff8a;
+    background: rgba(138, 255, 138, 0.1);
+    padding: 2px 6px;
+    border-radius: 5px;
+}
+
+.tip-slider {
+    width: 100%;
+    margin: 1.5rem 0;
+    cursor: pointer;
+}
+
+.tip-amount-display {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.tip-modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1.5rem;
+}
+
+.tip-modal-buttons button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.tip-modal-buttons button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tip-confirm-btn {
+    background: linear-gradient(45deg, #28a745, #218838);
+    color: white;
+}
+.tip-confirm-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.tip-cancel-btn {
+    background: #6c757d;
+    color: white;
+}
+.tip-cancel-btn:hover:not(:disabled) {
+    background: #5a6268;
+}
+
 @media (max-width: 768px) {
     .header h1 {
         font-size: 1.2rem;
