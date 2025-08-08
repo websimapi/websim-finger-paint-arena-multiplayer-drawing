@@ -177,9 +177,6 @@ function FingerPaintApp() {
     });
   };
   const clearCanvas = async () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     await room.collection("paintings").create({
       path: [{ x: 0, y: 0 }],
       color: "#FFFFFF",
@@ -197,13 +194,13 @@ function FingerPaintApp() {
     /* @__PURE__ */ jsxDEV("header", { className: "header", children: [
       /* @__PURE__ */ jsxDEV("h1", { children: "Finger Paint Arena" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 255,
+        lineNumber: 256,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("div", { children: [
         /* @__PURE__ */ jsxDEV("button", { onClick: handleTip, className: "tip-btn", children: "\u{1F48E} Tip to Protect Art" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 257,
+          lineNumber: 258,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV(
@@ -217,19 +214,19 @@ function FingerPaintApp() {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 260,
+            lineNumber: 261,
             columnNumber: 21
           },
           this
         )
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 256,
+        lineNumber: 257,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 254,
+      lineNumber: 255,
       columnNumber: 13
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: `canvas-container ${showLeaderboard ? "shrink" : ""}`, children: [
@@ -249,7 +246,7 @@ function FingerPaintApp() {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 270,
+          lineNumber: 271,
           columnNumber: 17
         },
         this
@@ -266,13 +263,13 @@ function FingerPaintApp() {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 284,
+            lineNumber: 285,
             columnNumber: 29
           },
           this
         )) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 282,
+          lineNumber: 283,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "brush-controls", children: [
@@ -282,7 +279,7 @@ function FingerPaintApp() {
             "px"
           ] }, void 0, true, {
             fileName: "<stdin>",
-            lineNumber: 294,
+            lineNumber: 295,
             columnNumber: 25
           }, this),
           /* @__PURE__ */ jsxDEV(
@@ -298,35 +295,35 @@ function FingerPaintApp() {
             false,
             {
               fileName: "<stdin>",
-              lineNumber: 295,
+              lineNumber: 296,
               columnNumber: 25
             },
             this
           )
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 293,
+          lineNumber: 294,
           columnNumber: 21
         }, this),
         /* @__PURE__ */ jsxDEV("button", { onClick: clearCanvas, className: "clear-btn", children: "\u{1F5D1}\uFE0F Clear" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 304,
+          lineNumber: 305,
           columnNumber: 21
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 281,
+        lineNumber: 282,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 269,
+      lineNumber: 270,
       columnNumber: 13
     }, this),
     showLeaderboard && /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-panel", children: [
       /* @__PURE__ */ jsxDEV("h2", { children: "\u{1F3C6} Global Leaderboard" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 312,
+        lineNumber: 313,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "sync-status", children: [
@@ -334,12 +331,12 @@ function FingerPaintApp() {
         new Date(lastSync).toLocaleTimeString()
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 313,
+        lineNumber: 314,
         columnNumber: 21
       }, this),
       leaderboardLoading ? /* @__PURE__ */ jsxDEV("div", { className: "loading", children: "Loading..." }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 317,
+        lineNumber: 318,
         columnNumber: 25
       }, this) : /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-list", children: leaderboard?.map((user, index) => /* @__PURE__ */ jsxDEV("div", { className: "leaderboard-item", children: [
         /* @__PURE__ */ jsxDEV("span", { className: "rank", children: [
@@ -347,12 +344,12 @@ function FingerPaintApp() {
           index + 1
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 322,
+          lineNumber: 323,
           columnNumber: 37
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "username", children: user.username }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 323,
+          lineNumber: 324,
           columnNumber: 37
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "stats", children: [
@@ -364,32 +361,32 @@ function FingerPaintApp() {
           " likes"
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 324,
+          lineNumber: 325,
           columnNumber: 37
         }, this)
       ] }, user.user_id, true, {
         fileName: "<stdin>",
-        lineNumber: 321,
+        lineNumber: 322,
         columnNumber: 33
       }, this)) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 319,
+        lineNumber: 320,
         columnNumber: 25
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 311,
+      lineNumber: 312,
       columnNumber: 17
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 253,
+    lineNumber: 254,
     columnNumber: 9
   }, this);
 }
 const root = createRoot(document.getElementById("root"));
 root.render(/* @__PURE__ */ jsxDEV(FingerPaintApp, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 338,
+  lineNumber: 339,
   columnNumber: 13
 }));
