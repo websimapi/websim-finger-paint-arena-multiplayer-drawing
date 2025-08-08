@@ -1,0 +1,192 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    overflow: hidden;
+    touch-action: none;
+}
+
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.leaderboard-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.leaderboard-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.canvas-container {
+    flex: 1;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.canvas-container.shrink {
+    flex: 0.7;
+}
+
+.drawing-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+}
+
+.controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 1rem;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+}
+
+.color-picker {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.color-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.color-btn.active {
+    transform: scale(1.2);
+    border: 2px solid white;
+}
+
+.brush-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.brush-controls input[type="range"] {
+    width: 100px;
+}
+
+.clear-btn {
+    background: rgba(255, 100, 100, 0.8);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+    background: rgba(255, 100, 100, 1);
+}
+
+.leaderboard-panel {
+    width: 30%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.leaderboard-panel h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.rank {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.username {
+    font-weight: 500;
+}
+
+.stats {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.2rem;
+    }
+    
+    .controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .canvas-container.shrink {
+        flex: 1;
+    }
+    
+    .leaderboard-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+}
+

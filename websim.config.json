@@ -1,0 +1,38 @@
+{
+  "database": {
+    "schema": {
+      "paintings": {
+        "id": {
+          "type": "uuid",
+          "description": "Unique identifier for each painting"
+        },
+        "path": {
+          "type": "jsonb",
+          "description": "Array of points representing the drawing path"
+        },
+        "color": {
+          "type": "text",
+          "description": "Color used for the painting"
+        },
+        "brushSize": {
+          "type": "integer",
+          "description": "Size of the brush used"
+        },
+        "likes": {
+          "type": "integer",
+          "description": "Number of likes this painting has received"
+        },
+        "user_id": {
+          "type": "uuid",
+          "description": "ID of the user who created this painting"
+        },
+        "created_at": {
+          "type": "timestamptz",
+          "description": "When the painting was created"
+        }
+      }
+    },
+    "instructions": "This is a multiplayer finger painting app. Users can draw on their phones with their fingers, and all drawings are synced in real-time. The leaderboard shows users ranked by total likes received on their paintings."
+  }
+}
+
